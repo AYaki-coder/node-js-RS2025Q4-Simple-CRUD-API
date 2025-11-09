@@ -1,0 +1,20 @@
+{
+    "name": "node-js-2025q4-simple-crud-api",
+    "version": "1.0.0",
+    "description": "",
+    "homepage": "https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API#readme",
+    "bugs": {
+        "url": "https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API.git"
+    },
+    "license": "ISC",
+    "author": "Alena Yakimovich",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    }
+}
