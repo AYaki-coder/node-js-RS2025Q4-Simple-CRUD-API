@@ -1,20 +1,25 @@
 {
-    "name": "node-js-2025q4-simple-crud-api",
-    "version": "1.0.0",
-    "description": "",
-    "homepage": "https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API#readme",
-    "bugs": {
-        "url": "https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/AYaki-coder/node-js-RS2025Q4-Simple-CRUD-API.git"
-    },
-    "license": "ISC",
-    "author": "Alena Yakimovich",
-    "type": "module",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    }
+  "name": "simple-crud-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "nodemon src/index.ts"
+  },
+  "engines": {
+    "node": ">=24.10.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/uuid": "^10.0.0",
+    "cross-env": "^10.1.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
 }
