@@ -1,18 +1,12 @@
-import http from 'node:http';
+import { startCluster } from './cluster';
 import { config } from './common/config';
-import { ServerResponse, IncomingMessage } from 'http';
-import { Api } from './api';
-import { handleErrors } from './handle-errors';
+import { startServer } from './server';
 
-const server = http.createServer();
-const api = new Api();
-
-server.on('request', (req: IncomingMessage, res: ServerResponse) => {
-  try {
-    api.run(req, res);
-  } catch (error) {
-    handleErrors(error, res);
-  }
-});
-
-server.listen(config.port);
+if (config.multi) {
+  //start server
+  startCluster();
+} else {
+  //start server
+  console.log('start server');
+  startServer(config.port);
+}

@@ -8,7 +8,10 @@
     "start": "nodemon src/index.ts",
     "start:dev": "nodemon src/index.ts",
     "start:prod": "npm run build && node dist/bundle.js",
-    "test": "jest"
+    "start:dev:multi": "cross-env multi=1 nodemon src/index.ts",
+    "start:prod:multi": "npm run build &&  cross-env multi=1 node dist/bundle.js",
+    "test": "jest",
+    "format": "prettier --write ./src"
   },
   "engines": {
     "node": ">=24.10.0"
