@@ -7,7 +7,10 @@ export interface User {
 export interface LinkDetails {
   searchParams: URLSearchParams;
   hash: string;
-  pathnameChunks: string[];
+  apiName?: string;
+  route?: string;
+  id?: string;
+  rest: string[];
 }
 
 export enum Method {
@@ -15,4 +18,9 @@ export enum Method {
   Put = 'PUT',
   Post = 'POST',
   Delete = 'DELETE',
+}
+
+export interface ToResponse {
+  msg: string | User[];
+  code: number;
 }
