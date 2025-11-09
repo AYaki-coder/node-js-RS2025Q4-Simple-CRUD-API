@@ -1,21 +1,14 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { Method, ToResponse, User } from './types';
+import { Method, ToResponse } from './types';
 import { sendResponse } from './send-response';
 import { getLinkDetails, isLinkValid } from './link';
 import { CustomError } from './custom-error';
 import { handleErrors } from './handle-errors';
+import { User } from './user';
+import { validate } from 'uuid';
 
 export class Api {
-  private readonly Users: User[] = [
-    {
-      username: 'Vredina',
-      age: 41,
-      hobbies: ['zastavlyat delat'],
-    },
-    { username: 'Mary', age: 23, hobbies: ['sport'] },
-    { username: 'Julia', age: 36, hobbies: ['bakery', 'dancing'] },
-    { username: 'John', age: 51, hobbies: ['gardening', 'spanish', 'detective stories'] },
-  ];
+  private readonly users: User[] = [];
 
   public run(req: IncomingMessage, res: ServerResponse) {
     const linkDetails = getLinkDetails(req);
@@ -27,15 +20,15 @@ export class Api {
       );
     }
 
-    let reqData = '';
+    let reqBody = '';
 
     req.on('data', (chunk) => {
-      reqData += chunk;
+      reqBody += chunk;
     });
 
     req.on('end', () => {
       try {
-        const response = this.handleRequest(req, reqData, linkDetails.id);
+        const response = this.composeResponse(req, reqBody, linkDetails.id);
         sendResponse(res, JSON.stringify(response.msg), response.code);
       } catch (error) {
         handleErrors(error, res);
@@ -43,24 +36,27 @@ export class Api {
     });
   }
 
-  private handleRequest(req: IncomingMessage, data: string, id?: string): ToResponse {
+  private composeResponse(req: IncomingMessage, body: string, id?: string): ToResponse {
     let toResponse: ToResponse;
 
     switch (req.method) {
       case Method.Get:
-        toResponse = this.get(data, id);
+        toResponse = id ? this.get(id) : this.getAll();
         break;
 
       case Method.Put:
-        toResponse = this.put(data, id);
+        toResponse = this.put(body, id);
         break;
 
       case Method.Post:
-        toResponse = this.post(data, id);
+        if (id) {
+          throw new CustomError(404, "This method doesn't support id route");
+        }
+        toResponse = this.post(body);
         break;
 
       case Method.Delete:
-        toResponse = this.delete(data, id);
+        toResponse = this.delete(id);
         break;
 
       default:
@@ -69,20 +65,63 @@ export class Api {
     return toResponse;
   }
 
-  private get(data: string, id?: string): ToResponse {
-    console.log(`method "get" works with data: ${data} and id: ${id}`);
-    return { msg: this.Users, code: 200 };
+  private getAll(): ToResponse {
+    return { msg: this.users, code: 200 };
   }
 
-  private put(data: string, id?: string): ToResponse {
-    return { msg: `method "PUT" works with data: ${data} and id: ${id}`, code: 200 };
+  private get(id: string): ToResponse {
+    if (!validate(id)) {
+      throw new CustomError(400, `Id: ${id} has not supported format`);
+    }
+
+    const user = this.users.find((x) => x.id === id);
+    if (!user) {
+      console.log(`Id: ${id} has not supported format`);
+      throw new CustomError(404, `User ${id} not found`);
+    }
+
+    return { msg: user, code: 200 };
   }
 
-  private post(data: string, id?: string): ToResponse {
-    return { msg: `method "POST" works with data: ${data} and id: ${id}`, code: 200 };
+  private put(body: string, id?: string): ToResponse {
+    if (!validate(id)) {
+      throw new CustomError(400, `Id: ${id} has not supported format`);
+    }
+
+    const updatedInfo = new User(body, id);
+
+    const user = this.users.find((x) => x.id === id);
+    if (!user) {
+      throw new CustomError(404, `User ${id} not found`);
+    }
+
+    user.username = updatedInfo.username;
+    user.age = updatedInfo.age;
+    user.hobbies = updatedInfo.hobbies;
+
+    return { msg: user, code: 200 };
   }
 
-  private delete(data: string, id?: string): ToResponse {
-    return { msg: `method "DELETE" works with data: ${data} and id: ${id}`, code: 200 };
+  private post(body: string): ToResponse {
+    const user = new User(body);
+    this.users.push(user);
+
+    return { msg: user, code: 201 };
+  }
+
+  private delete(id?: string): ToResponse {
+    if (!validate(id)) {
+      throw new CustomError(400, `Id: ${id} has not supported format`);
+    }
+
+    const userId = this.users.findIndex((x) => x.id === id);
+
+    if (userId < 0) {
+      throw new CustomError(404, `User ${id} not found`);
+    }
+
+    this.users.splice(userId, 1);
+
+    return { msg: `User ${id} was deleted`, code: 204 };
   }
 }

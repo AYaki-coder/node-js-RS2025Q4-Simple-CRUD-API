@@ -4,8 +4,8 @@ import { sendResponse } from './send-response';
 
 export const handleErrors = (error: unknown, res: ServerResponse): void => {
   if (error instanceof CustomError) {
-    sendResponse(res, error.msg, error.statusCode);
+    sendResponse(res, JSON.stringify(error.msg), error.statusCode);
     return;
   }
-  sendResponse(res, 'Oops! Something went wrong', 500);
+  sendResponse(res, JSON.stringify('Oops! Something went wrong'), 500);
 };

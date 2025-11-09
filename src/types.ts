@@ -1,4 +1,6 @@
-export interface User {
+import { User } from './user';
+
+export interface UserInfo {
   username: string;
   age: number;
   hobbies: string[];
@@ -21,6 +23,6 @@ export enum Method {
 }
 
 export interface ToResponse {
-  msg: string | User[];
+  msg: string | User[] | User;
   code: number;
 }
